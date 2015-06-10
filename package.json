@@ -36,6 +36,7 @@
     "gulp-esformatter": "^4.0.0",
     "gulp-if": "^1.2.5",
     "gulp-ignore": "^1.2.1",
+    "gulp-jsdoc": "^0.1.4",
     "gulp-jshint": "^1.11.0",
     "gulp-load-plugins": "^0.10.0",
     "gulp-rename": "^1.2.2",
