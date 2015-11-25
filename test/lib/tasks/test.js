@@ -36,7 +36,7 @@ describe('Test Tasks', function() {
 		karmaStub.Server.restore();
 	});
 
-	it('should run unit tests', function(done) {
+	it.only('should run unit tests', function(done) {
 		registerTestTasks();
 
 		gulp.start('test', function() {
