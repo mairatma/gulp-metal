@@ -30,6 +30,7 @@
     "babelify": "^7.3.0",
     "browserify": "^13.0.1",
     "del": "^2.0.2",
+    "globby": "^5.0.0",
     "gulp": "^3.8.11",
     "gulp-esformatter": "^5.0.0",
     "gulp-jshint": "^2.0.0",
@@ -41,6 +42,7 @@
     "metal-tools-soy": "^3.0.0",
     "open": "0.0.5",
     "run-sequence": "^1.1.0",
+    "through2": "^2.0.1",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.7.0"
   },
@@ -52,15 +54,14 @@
     "mocha": "^2.2.5",
     "mockery": "^1.4.0",
     "rewire": "^2.3.4",
-    "sinon": "^1.14.1",
-    "through2": "^2.0.0"
+    "sinon": "^1.14.1"
   },
   "bundledDependencies": [
-    "babel-plugin-transform-es2015-classes",
-    "babel-preset-es2015",
+    "babel-preset-metal",
     "babelify",
     "browserify",
     "del",
+    "globby",
     "gulp",
     "gulp-esformatter",
     "gulp-jshint",
@@ -72,6 +73,8 @@
     "metal-tools-soy",
     "open",
     "run-sequence",
+    "through2",
+    "vinyl-source-stream",
     "watchify"
   ]
 }
