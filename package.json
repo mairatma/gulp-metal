@@ -46,6 +46,8 @@
   },
   "devDependencies": {
     "babel-deps": "^2.0.0",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-safari-launcher": "^1.0.0",
     "metal": "^1.0.0-rc",
     "mocha": "^2.2.5",
     "mockery": "^1.4.0",
