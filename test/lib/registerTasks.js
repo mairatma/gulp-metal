@@ -121,7 +121,7 @@ describe('registerTasks', function() {
 		assert.strictEqual('new2', handler2.args[0][0].someData);
 	});
 
-	it('should only register tasks with their full names when requested', function() {
+	it('should register tasks with their full names when requested', function() {
 		registerTasks({
 			tools: [
 				[
@@ -134,6 +134,22 @@ describe('registerTasks', function() {
 
 		assert.strictEqual(2, gulp.task.callCount);
 		assert.strictEqual('full:task1', gulp.task.args[0][0]);
+		assert.strictEqual('task2', gulp.task.args[1][0]);
+	});
+
+	it('should register tasks with prefix when requested', function() {
+		registerTasks({
+			tools: [
+				[
+					{name: 'task1', handler: sinon.stub()},
+					{prefix: 'prefix:'}
+				],
+				{name: 'task2', handler: sinon.stub()}
+			]
+		});
+
+		assert.strictEqual(2, gulp.task.callCount);
+		assert.strictEqual('prefix:task1', gulp.task.args[0][0]);
 		assert.strictEqual('task2', gulp.task.args[1][0]);
 	});
 });
