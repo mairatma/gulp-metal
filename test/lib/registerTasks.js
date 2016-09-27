@@ -152,4 +152,23 @@ describe('registerTasks', function() {
 		assert.strictEqual('prefix:task1', gulp.task.args[0][0]);
 		assert.strictEqual('task2', gulp.task.args[1][0]);
 	});
+
+	it('should register tasks with their task dependencies when requested', function() {
+		registerTasks({
+			tools: [
+				[
+					{name: 'task1', handler: sinon.stub().returns(1)},
+					{deps: ['task2']}
+				],
+				{name: 'task2', handler: sinon.stub().returns(2)}
+			]
+		});
+
+		assert.strictEqual(2, gulp.task.callCount);
+		assert.strictEqual('task1', gulp.task.args[0][0]);
+		assert.deepEqual(['task2'], gulp.task.args[0][1]);
+		assert.strictEqual(1, gulp.task.args[0][2]);
+		assert.strictEqual('task2', gulp.task.args[1][0]);
+		assert.strictEqual(2, gulp.task.args[1][1]);
+	});
 });
