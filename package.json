@@ -17,8 +17,9 @@
     "lib/**/*.js"
   ],
   "scripts": {
-    "lint": "jshint index.js lib/*.js test/lib/*.js",
-    "test": "mocha test/lib/*.js --slow 1000 --timeout 6000"
+		"coverage": "istanbul cover _mocha -- test/lib/*.js --slow 1000 --timeout 6000",
+		"lint": "jshint index.js lib/*.js test/lib/*.js",
+		"test": "mocha test/lib/*.js --slow 1000 --timeout 6000"
   },
   "keywords": [
     "gulp",
@@ -29,6 +30,7 @@
     "merge": "^1.2.0"
   },
   "devDependencies": {
+    "istanbul": "^0.4.5",
     "jshint": "^2.9.3",
     "mocha": "^3.1.0",
     "sinon": "^1.14.1",
