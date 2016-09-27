@@ -1,17 +1,21 @@
 'use strict';
 
 var assert = require('assert');
-var gulp = require('gulp');
+var getGulp = require('../../lib/getGulp');
 var registerTasks = require('../../lib/registerTasks');
 var sinon = require('sinon');
 
 describe('registerTasks', function() {
+	var gulp;
 	beforeEach(function() {
-		sinon.stub(gulp, 'task');
+		gulp = {
+			task: sinon.stub()
+		};
+		sinon.stub(getGulp, 'get').returns(gulp);
 	});
 
 	afterEach(function() {
-		gulp.task.restore();
+		getGulp.get.restore();
 	});
 
 	it('should register no tasks if no tools are passed', function() {
@@ -37,11 +41,14 @@ describe('registerTasks', function() {
 
 		assert.strictEqual(3, gulp.task.callCount);
 		assert.strictEqual('tool1-task1', gulp.task.args[0][0]);
-		assert.strictEqual(1, gulp.task.args[0][1]);
+		assert.strictEqual('', gulp.task.args[0][1]);
+		assert.strictEqual(1, gulp.task.args[0][2]);
 		assert.strictEqual('tool1-task2', gulp.task.args[1][0]);
-		assert.strictEqual(2, gulp.task.args[1][1]);
+		assert.strictEqual('', gulp.task.args[1][1]);
+		assert.strictEqual(2, gulp.task.args[1][2]);
 		assert.strictEqual('tool2-task1', gulp.task.args[2][0]);
-		assert.strictEqual(3, gulp.task.args[2][1]);
+		assert.strictEqual('', gulp.task.args[2][1]);
+		assert.strictEqual(3, gulp.task.args[2][2]);
 	});
 
 	it('should register tasks passed on their own', function() {
@@ -54,9 +61,11 @@ describe('registerTasks', function() {
 
 		assert.strictEqual(2, gulp.task.callCount);
 		assert.strictEqual('task1', gulp.task.args[0][0]);
-		assert.strictEqual(1, gulp.task.args[0][1]);
+		assert.strictEqual('', gulp.task.args[0][1]);
+		assert.strictEqual(1, gulp.task.args[0][2]);
 		assert.strictEqual('task2', gulp.task.args[1][0]);
-		assert.strictEqual(2, gulp.task.args[1][1]);
+		assert.strictEqual('', gulp.task.args[1][1]);
+		assert.strictEqual(2, gulp.task.args[1][2]);
 	});
 
 	it('should throw error if invalid tasks are given', function() {
@@ -166,9 +175,28 @@ describe('registerTasks', function() {
 
 		assert.strictEqual(2, gulp.task.callCount);
 		assert.strictEqual('task1', gulp.task.args[0][0]);
-		assert.deepEqual(['task2'], gulp.task.args[0][1]);
+		assert.strictEqual('', gulp.task.args[0][1]);
+		assert.deepEqual(['task2'], gulp.task.args[0][2]);
+		assert.strictEqual(1, gulp.task.args[0][3]);
+		assert.strictEqual('task2', gulp.task.args[1][0]);
+		assert.strictEqual('', gulp.task.args[1][1]);
+		assert.strictEqual(2, gulp.task.args[1][2]);
+	});
+
+	it('should register tasks with their help descriptions', function() {
+		registerTasks({
+			tools: [
+				{name: 'task1', help: 'help1', handler: sinon.stub().returns(1)},
+				{name: 'task2', help: 'help2', handler: sinon.stub().returns(2)}
+			]
+		});
+
+		assert.strictEqual(2, gulp.task.callCount);
+		assert.strictEqual('task1', gulp.task.args[0][0]);
+		assert.strictEqual('help1', gulp.task.args[0][1]);
 		assert.strictEqual(1, gulp.task.args[0][2]);
 		assert.strictEqual('task2', gulp.task.args[1][0]);
-		assert.strictEqual(2, gulp.task.args[1][1]);
+		assert.strictEqual('help2', gulp.task.args[1][1]);
+		assert.strictEqual(2, gulp.task.args[1][2]);
 	});
 });
