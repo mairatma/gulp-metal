@@ -120,4 +120,20 @@ describe('registerTasks', function() {
 		assert.notStrictEqual(config, handler2.args[0][0]);
 		assert.strictEqual('new2', handler2.args[0][0].someData);
 	});
+
+	it('should only register tasks with their full names when requested', function() {
+		registerTasks({
+			tools: [
+				[
+					{name: 'task1', fullName: 'full:task1', handler: sinon.stub()},
+					{useFullName: true}
+				],
+				{name: 'task2', fullName: 'full:task2', handler: sinon.stub()}
+			]
+		});
+
+		assert.strictEqual(2, gulp.task.callCount);
+		assert.strictEqual('full:task1', gulp.task.args[0][0]);
+		assert.strictEqual('task2', gulp.task.args[1][0]);
+	});
 });
