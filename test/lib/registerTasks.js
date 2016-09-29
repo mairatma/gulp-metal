@@ -127,7 +127,7 @@ describe('registerTasks', function() {
 
 		gulp.task.args[0][3]();
 		assert.strictEqual(1, handler.callCount);
-		assert.strictEqual(config, handler.args[0][0]);
+		assert.deepEqual(config, handler.args[0][0]);
 	});
 
 	it('should merge config with specific config data for each task', function() {
@@ -158,6 +158,26 @@ describe('registerTasks', function() {
 			tools: [
 				[
 					{name: 'task1', fullName: 'full:task1', handler: sinon.stub()},
+					{useFullName: true}
+				],
+				{name: 'task2', fullName: 'full:task2', handler: sinon.stub()}
+			]
+		});
+
+		assert.strictEqual(2, gulp.task.callCount);
+		assert.strictEqual('full:task1', gulp.task.args[0][0]);
+		assert.strictEqual('task2', gulp.task.args[1][0]);
+	});
+
+	it('should register tasks coming from TASKS with their full names when requested', function() {
+		registerTasks({
+			tools: [
+				[
+					{
+						TASKS: [
+							{name: 'task1', fullName: 'full:task1', handler: sinon.stub()},
+						]
+					},
 					{useFullName: true}
 				],
 				{name: 'task2', fullName: 'full:task2', handler: sinon.stub()}
