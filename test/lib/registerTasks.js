@@ -26,13 +26,13 @@ describe('registerTasks', function() {
 	it('should register tasks passed via tool objects', function() {
 		var TestTool1 = {
 			TASKS: [
-				{name: 'tool1-task1', handler: sinon.stub().returns(1)},
-				{name: 'tool1-task2', handler: sinon.stub().returns(2)}
+				{name: 'tool1-task1', handler: sinon.stub()},
+				{name: 'tool1-task2', handler: sinon.stub()}
 			]
 		};
 		var TestTool2 = {
 			TASKS: [
-				{name: 'tool2-task1', handler: sinon.stub().returns(3)}
+				{name: 'tool2-task1', handler: sinon.stub()}
 			]
 		};
 		registerTasks({
@@ -42,30 +42,50 @@ describe('registerTasks', function() {
 		assert.strictEqual(3, gulp.task.callCount);
 		assert.strictEqual('tool1-task1', gulp.task.args[0][0]);
 		assert.strictEqual('', gulp.task.args[0][1]);
-		assert.strictEqual(1, gulp.task.args[0][2]);
+		assert.deepEqual([], gulp.task.args[0][2]);
+		assert.ok(gulp.task.args[0][3]);
+		gulp.task.args[0][3]();
+		assert.strictEqual(1, TestTool1.TASKS[0].handler.callCount);
+
 		assert.strictEqual('tool1-task2', gulp.task.args[1][0]);
 		assert.strictEqual('', gulp.task.args[1][1]);
-		assert.strictEqual(2, gulp.task.args[1][2]);
+		assert.deepEqual([], gulp.task.args[1][2]);
+		assert.ok(gulp.task.args[1][3]);
+		gulp.task.args[1][3]();
+		assert.strictEqual(1, TestTool1.TASKS[1].handler.callCount);
+
 		assert.strictEqual('tool2-task1', gulp.task.args[2][0]);
 		assert.strictEqual('', gulp.task.args[2][1]);
-		assert.strictEqual(3, gulp.task.args[2][2]);
+		assert.deepEqual([], gulp.task.args[2][2]);
+		assert.ok(gulp.task.args[2][3]);
+		gulp.task.args[2][3]();
+		assert.strictEqual(1, TestTool2.TASKS[0].handler.callCount);
 	});
 
 	it('should register tasks passed on their own', function() {
+		var handler1 = sinon.stub();
+		var handler2 = sinon.stub();
 		registerTasks({
 			tools: [
-				{name: 'task1', handler: sinon.stub().returns(1)},
-				{name: 'task2', handler: sinon.stub().returns(2)}
+				{name: 'task1', handler: handler1},
+				{name: 'task2', handler: handler2}
 			]
 		});
 
 		assert.strictEqual(2, gulp.task.callCount);
 		assert.strictEqual('task1', gulp.task.args[0][0]);
 		assert.strictEqual('', gulp.task.args[0][1]);
-		assert.strictEqual(1, gulp.task.args[0][2]);
+		assert.deepEqual([], gulp.task.args[0][2]);
+		assert.ok(gulp.task.args[0][3]);
+		gulp.task.args[0][3]();
+		assert.strictEqual(1, handler1.callCount);
+
 		assert.strictEqual('task2', gulp.task.args[1][0]);
 		assert.strictEqual('', gulp.task.args[1][1]);
-		assert.strictEqual(2, gulp.task.args[1][2]);
+		assert.deepEqual([], gulp.task.args[1][2]);
+		assert.ok(gulp.task.args[1][3]);
+		gulp.task.args[1][3]();
+		assert.strictEqual(1, handler2.callCount);
 	});
 
 	it('should throw error if invalid tasks are given', function() {
@@ -81,7 +101,7 @@ describe('registerTasks', function() {
 			registerTasks({
 				tools: [{
 					TASKS: [
-						{handler: sinon.stub().returns(1)}
+						{handler: sinon.stub()}
 					]
 				}]
 			});
@@ -105,6 +125,7 @@ describe('registerTasks', function() {
 		};
 		registerTasks(config);
 
+		gulp.task.args[0][3]();
 		assert.strictEqual(1, handler.callCount);
 		assert.strictEqual(config, handler.args[0][0]);
 	});
@@ -121,10 +142,12 @@ describe('registerTasks', function() {
 		};
 		registerTasks(config);
 
+		gulp.task.args[0][3]();
 		assert.strictEqual(1, handler1.callCount);
 		assert.notStrictEqual(config, handler1.args[0][0]);
 		assert.strictEqual('new1', handler1.args[0][0].someData);
 
+		gulp.task.args[1][3]();
 		assert.strictEqual(1, handler2.callCount);
 		assert.notStrictEqual(config, handler2.args[0][0]);
 		assert.strictEqual('new2', handler2.args[0][0].someData);
@@ -166,10 +189,10 @@ describe('registerTasks', function() {
 		registerTasks({
 			tools: [
 				[
-					{name: 'task1', handler: sinon.stub().returns(1)},
+					{name: 'task1', handler: sinon.stub()},
 					{deps: ['task2']}
 				],
-				{name: 'task2', handler: sinon.stub().returns(2)}
+				{name: 'task2', handler: sinon.stub()}
 			]
 		});
 
@@ -177,26 +200,23 @@ describe('registerTasks', function() {
 		assert.strictEqual('task1', gulp.task.args[0][0]);
 		assert.strictEqual('', gulp.task.args[0][1]);
 		assert.deepEqual(['task2'], gulp.task.args[0][2]);
-		assert.strictEqual(1, gulp.task.args[0][3]);
 		assert.strictEqual('task2', gulp.task.args[1][0]);
 		assert.strictEqual('', gulp.task.args[1][1]);
-		assert.strictEqual(2, gulp.task.args[1][2]);
+		assert.deepEqual([], gulp.task.args[1][2]);
 	});
 
 	it('should register tasks with their help descriptions', function() {
 		registerTasks({
 			tools: [
-				{name: 'task1', help: 'help1', handler: sinon.stub().returns(1)},
-				{name: 'task2', help: 'help2', handler: sinon.stub().returns(2)}
+				{name: 'task1', help: 'help1', handler: sinon.stub()},
+				{name: 'task2', help: 'help2', handler: sinon.stub()}
 			]
 		});
 
 		assert.strictEqual(2, gulp.task.callCount);
 		assert.strictEqual('task1', gulp.task.args[0][0]);
 		assert.strictEqual('help1', gulp.task.args[0][1]);
-		assert.strictEqual(1, gulp.task.args[0][2]);
 		assert.strictEqual('task2', gulp.task.args[1][0]);
 		assert.strictEqual('help2', gulp.task.args[1][1]);
-		assert.strictEqual(2, gulp.task.args[1][2]);
 	});
 });
